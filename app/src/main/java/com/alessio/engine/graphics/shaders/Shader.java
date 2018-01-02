@@ -1,16 +1,21 @@
-package com.alessio.test.graphics;
+package com.alessio.engine.graphics.shaders;
 
 import android.util.Log;
 
-import com.alessio.test.utils.DebugTools;
+import com.alessio.engine.utils.DebugTools;
 
 import static android.opengl.GLES30.*;
 
-public class Shader {
-    private int program;
-    private int samplerArrayLoc;
+public abstract class Shader {
+    protected int program;
+    protected String vertexSource, fragmentSource;
 
     public Shader(String vertexSource, String fragmentSource) {
+        this.vertexSource = vertexSource;
+        this.fragmentSource = fragmentSource;
+    }
+
+    public void init() {
         int vertexShaderHandle, fragmentShaderHandle;
         vertexShaderHandle = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShaderHandle, vertexSource);
@@ -38,36 +43,17 @@ public class Shader {
         if (res[0] != GL_TRUE)
             Log.e("Program error: ", glGetProgramInfoLog(program));
 
-        glUseProgram(program);
-
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glEnableVertexAttribArray(3);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, Vertex.SIZE, 0);
-        glVertexAttribPointer(1, 4, GL_FLOAT, false, Vertex.SIZE, 3 * 4);
-        glVertexAttribPointer(2, 2, GL_FLOAT, false, Vertex.SIZE, 3 * 4 + 4 * 4);
-        glVertexAttribPointer(3, 1, GL_FLOAT, false, Vertex.SIZE, 3 * 4 + 4 * 4 + 4 * 2);
-        samplerArrayLoc = glGetUniformLocation(program, "textures");
-
         glDeleteShader(vertexShaderHandle);
         glDeleteShader(fragmentShaderHandle);
+
+        setUpAttributes();
 
         DebugTools.check();
     }
 
+    public abstract void setUpAttributes();
+
     public void bind() {
         glUseProgram(program);
-    }
-
-    public void setSamplers(int quantity) {
-        bind();
-        int samplers[] = new int[quantity];
-
-        for(int i = 0; i < quantity; i++)
-            samplers[i] = i;
-
-        glUniform1iv(samplerArrayLoc, quantity, samplers, 0);
     }
 }

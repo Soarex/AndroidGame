@@ -1,4 +1,4 @@
-package com.alessio.test.math;
+package com.alessio.engine.math;
 
 public class Float2 {
     public float x, y;

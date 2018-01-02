@@ -1,6 +1,6 @@
-package com.alessio.test.graphics;
+package com.alessio.engine.graphics;
 
-import com.alessio.test.utils.DebugTools;
+import com.alessio.engine.utils.DebugTools;
 
 import java.nio.FloatBuffer;
 
@@ -15,6 +15,9 @@ public class VertexBuffer {
         offset = 0;
         this.size = size;
 
+    }
+
+    public void init() {
         int[] temp = new int[1];
         glGenBuffers(1, temp, 0);
         handle = temp[0];
@@ -34,6 +37,10 @@ public class VertexBuffer {
         glBufferSubData(GL_ARRAY_BUFFER, offset, vertex.getSize(), FloatBuffer.wrap(vertex.toFloatArray()));
         offset += vertex.getSize();
         DebugTools.check();
+    }
+
+    public void clear() {
+        offset = 0;
     }
 
     public void delete() {

@@ -1,23 +1,16 @@
-package com.alessio.test.graphics;
+package com.alessio.engine.graphics;
 
-import android.opengl.GLSurfaceView;
+import android.util.Log;
 
-import com.alessio.test.R;
-import com.alessio.test.utils.DebugTools;
-import com.alessio.test.math.Float2;
-import com.alessio.test.math.Float3;
-import com.alessio.test.math.Float4;
-import com.alessio.test.shaders.DefaultShaders;
+import com.alessio.engine.utils.DebugTools;
+import com.alessio.engine.math.Float2;
+import com.alessio.engine.math.Float3;
 
 import java.util.ArrayList;
-import java.util.Stack;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
 
 import static android.opengl.GLES30.*;
 
-class Renderer2D implements GLSurfaceView.Renderer {
+public class Renderer2D {
     private VertexBuffer vertexBuffer;
     private IndexBuffer indexBuffer;
     private ArrayList<Texture> textures;
@@ -27,21 +20,18 @@ class Renderer2D implements GLSurfaceView.Renderer {
         indexBase = 0;
         vertexCount = 0;
         textures = new ArrayList<>(32);
-    }
-
-
-    Shader shader;
-    Sprite a, b;
-    Texture t1, t2;
-    public void initialize() {
         vertexBuffer = new VertexBuffer(Vertex.SIZE * 4 * 60000);
         indexBuffer = new IndexBuffer(60000 * 4);
-        shader = new Shader(DefaultShaders.VERTEX, DefaultShaders.FRAGMENT);
-        t1 = new Texture(R.drawable.texture1);
-        t2 = new Texture(R.drawable.texture2);
+    }
 
-        a = new Sprite(new Float3(-0.75f, 0, 1), new Float2(0.5f, 0.25f), t1);
-        b = new Sprite(new Float3(0.25f, 0, 1), new Float2(0.5f, 0.25f), t2);
+    public void init() {
+        vertexBuffer.init();
+        indexBuffer.init();
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glDepthFunc(GL_LESS);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        DebugTools.check();
     }
 
     public void submit(Sprite sprite) {
@@ -92,22 +82,12 @@ class Renderer2D implements GLSurfaceView.Renderer {
         vertexCount += 6;
     }
 
-    public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-        initialize();
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        DebugTools.check();
-    }
-
-    public void onDrawFrame(GL10 unused) {
-        glClear(GL_COLOR_BUFFER_BIT);
-        submit(a);
-        submit(b);
+    public void render() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         indexBuffer.bind();
         vertexBuffer.bind();
-        shader.bind();
 
-        shader.setSamplers(textures.size());
         for (int i = 0; i < textures.size(); i++){
             glActiveTexture((GL_TEXTURE0 + i));
             textures.get(i).bind();
@@ -118,11 +98,8 @@ class Renderer2D implements GLSurfaceView.Renderer {
 
         vertexCount = 0;
         indexBase = 0;
+        vertexBuffer.clear();
+        indexBuffer.clear();
         textures.clear();
-    }
-
-    public void onSurfaceChanged(GL10 unused, int width, int height) {
-        glViewport(0, 0, width, height);
-        DebugTools.check();
     }
 }

@@ -1,6 +1,6 @@
-package com.alessio.test.graphics;
+package com.alessio.engine.graphics;
 
-import com.alessio.test.utils.DebugTools;
+import com.alessio.engine.utils.DebugTools;
 
 import java.nio.IntBuffer;
 
@@ -14,7 +14,9 @@ public class IndexBuffer {
     public IndexBuffer(int size) {
         offset = 0;
         this.size = size;
+    }
 
+    public void init() {
         int[] temp = new int[1];
         glGenBuffers(1, temp, 0);
         handle = temp[0];
@@ -34,6 +36,10 @@ public class IndexBuffer {
         glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, indices.length * 4, IntBuffer.wrap(indices));
         offset += indices.length * 4;
         DebugTools.check();
+    }
+
+    public void clear() {
+        offset = 0;
     }
 
     public void delete() {

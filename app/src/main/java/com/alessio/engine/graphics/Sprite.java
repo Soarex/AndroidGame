@@ -1,8 +1,8 @@
-package com.alessio.test.graphics;
+package com.alessio.engine.graphics;
 
-import com.alessio.test.math.Float2;
-import com.alessio.test.math.Float3;
-import com.alessio.test.math.Float4;
+import com.alessio.engine.math.Float2;
+import com.alessio.engine.math.Float3;
+import com.alessio.engine.math.Float4;
 
 public class Sprite {
     public Float3 position;

@@ -1,10 +1,10 @@
-package com.alessio.test.graphics;
+package com.alessio.engine.graphics;
 
 import android.graphics.Bitmap;
 import android.opengl.GLUtils;
 
-import com.alessio.test.utils.DebugTools;
-import com.alessio.test.utils.ImageReader;
+import com.alessio.engine.utils.DebugTools;
+import com.alessio.engine.utils.ImageReader;
 
 import static android.opengl.GLES30.*;
 
